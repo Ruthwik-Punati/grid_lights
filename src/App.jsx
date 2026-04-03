@@ -2,14 +2,22 @@ import { useState } from "react";
 import "./styles.css";
 import { useEffect } from "react";
 
-const blocksArr = [...Array(9)].map((_, i) => {
-  const block = { filled: false };
-  i + 1 === 5 && (block.hidden = true);
-  return block;
-});
+const getBlocksArr = (config) => {
+  return config.flat().map((el, i) => {
+    const block = { filled: false };
+    el === 0 && (block.hidden = true);
+    return block;
+  });
+};
+
+const config = [
+  [1, 1, 1],
+  [1, 0, 1],
+  [1, 1, 1],
+];
 
 export default function App() {
-  const [blocks, setBlocks] = useState(blocksArr);
+  const [blocks, setBlocks] = useState(getBlocksArr(config));
   const [order, setOrder] = useState([]);
   const handleClick = (i) => {
     const updatedBlocks = [...blocks];
@@ -30,7 +38,7 @@ export default function App() {
   };
 
   const loopDefil = async () => {
-    if (order.length === blocks.length - 1) {
+    if (order.length === config.flat().filter((el) => el).length) {
       const order2 = [...order];
       for (let i = order2.length - 1; i >= 0; i--) {
         await defill(order2.pop());
