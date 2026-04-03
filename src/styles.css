@@ -1,24 +1,18 @@
 .gridContainer {
   border: 1px solid gray;
-  height: 100%;
+  width: 400px;
+  height: 400px;
   padding: 20px;
-  margin: 20px;
+  margin: auto;
 }
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
   gap: 20px;
   height: 100%;
 }
 .block {
-  height: 100%;
   border: 1px solid gray;
   cursor: pointer;
-}
-
-.block--hidden {
-  visibility: hidden;
 }
 
 .block--filled {

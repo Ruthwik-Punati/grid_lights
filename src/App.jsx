@@ -2,64 +2,50 @@ import { useState } from "react";
 import "./styles.css";
 import { useEffect } from "react";
 
-const getBlocksArr = (config) => {
-  return config.flat().map((el, i) => {
-    const block = { filled: false };
-    el === 0 && (block.hidden = true);
-    return block;
-  });
-};
-
 const config = [
   [1, 1, 1],
+  [1, 0, 1],
   [1, 0, 1],
   [1, 1, 1],
 ];
 
 export default function App() {
-  const [blocks, setBlocks] = useState(getBlocksArr(config));
   const [order, setOrder] = useState([]);
+
+  const deactivateCells = () => {
+    const timer = setInterval(() => {
+      setOrder((orgOrder) => {
+        const newOrder = orgOrder.slice();
+        newOrder.pop();
+        if (newOrder.length === 0) {
+          clearInterval(timer);
+        }
+        return newOrder;
+      });
+    }, 300);
+  };
+
   const handleClick = (i) => {
-    const updatedBlocks = [...blocks];
-    updatedBlocks[i].filled = true;
-    setBlocks(updatedBlocks);
-    setOrder([...order, i]);
-  };
+    const newOrder = [...order, i];
+    setOrder(newOrder);
 
-  const defill = (i) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const updatedBlocks = [...blocks];
-        updatedBlocks[i].filled = false;
-        setBlocks(updatedBlocks);
-        resolve();
-      }, 300);
-    });
-  };
-
-  const loopDefil = async () => {
-    if (order.length === config.flat().filter((el) => el).length) {
-      const order2 = [...order];
-      for (let i = order2.length - 1; i >= 0; i--) {
-        await defill(order2.pop());
-      }
-      setOrder(order2);
+    if (newOrder.length === config.flat().filter((el) => el).length) {
+      deactivateCells();
     }
   };
 
-  useEffect(() => {
-    loopDefil();
-  }, [order.length]);
   return (
     <div className="gridContainer">
-      <div className="grid">
-        {blocks.map((block, i) => {
+      <div
+        className="grid"
+        style={{ gridTemplateColumns: `repeat(${config[0].length},1fr)` }}
+      >
+        {config.flat().map((el, i) => {
+          if (el === 0) return <span key={i}></span>;
           return (
             <div
               key={i}
-              className={`block ${block.hidden ? "block--hidden" : ""} ${
-                block.filled ? "block--filled" : ""
-              }`}
+              className={`block ${order.includes(i) ? "block--filled" : ""}`}
               onClick={() => handleClick(i)}
             ></div>
           );
